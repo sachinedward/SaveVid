@@ -10,6 +10,7 @@ import Typography from 'material-ui/Typography';
 import Thumbnail from '../images/thumbnail.jpg';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
+import { CircularProgress } from 'material-ui/Progress';
 
 class SearchBar extends React.Component {
 
@@ -18,13 +19,14 @@ class SearchBar extends React.Component {
             .getElementById("search")
             .value;
         let _this = this;
+        this.props.callback("loading",false);
         if (searched.length > 0) {
             axios
                 .get("http://localhost:3001/search?name=" + searched)
                 .then(function (response) {
                     _this
                         .props
-                        .callback(response.data);
+                        .callback(response.data,true);
                 });
 
         }
@@ -32,43 +34,48 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <Grid container gutter={24}>
+            <div className="searchContainer">
                 <TextField id="search" label="Search" margin="normal" fullWidth/>
                 <Button
+                    className="login__button"
                     raised
                     onClick={this
                     .searchYoutube
                     .bind(this)}>
                     Search
                 </Button>
-            </Grid>
+            </div>
         );
     }
 }
+
 
 class Cards extends React.Component {
     
     constructor(props){
         super(props);
         this.state = {
-            openDialog: false
+            openDialog: false,
+            showSave: false
         }
+    }
+
+    saveVideo (params) {
+       alert(params);
     }
 
 
     render() {
         var data= this.props.data;
         var _this = this;
-        var url="https://youtube.com/watch?v=";
+        // var url="https://youtube.com/watch?v=";
         return (
+                                   
             <Grid container gutter={24}>
                 {Object.keys(data).map(function(item,index){
      return (<Grid item xs={3} sm={2} key={index}>
                 <Card >
                     <CardContent>
-                        <Typography type="headline" component="h2">
-                            <a href={url+data[item]}>watch</a>
-                        </Typography>
                         <CardMedia>
                             <img
                                 src={Thumbnail}
@@ -79,11 +86,11 @@ class Cards extends React.Component {
                         </CardMedia>
                     </CardContent>
                     <CardActions>
-                        <IconButton aria-label="Add an alarm">
-                            <Icon>mode_edit</Icon>
+                        <IconButton aria-label="Save Video" onClick={() => _this.saveVideo(data[item])}  key={item}>
+                            <Icon>save</Icon>
                         </IconButton>
-                        <IconButton aria-label="Add an alarm">
-                            <Icon>delete</Icon>
+                        <IconButton aria-label="Play Video">
+                            <Icon>play_circle_filled</Icon>
                         </IconButton>
                     </CardActions>
                 </Card>
@@ -95,17 +102,28 @@ class Cards extends React.Component {
     }
 }
 
+class Loader extends React.Component {
+    render() {
+        return(
+             <Grid container gutter={24}>
+             <CircularProgress /> 
+            </Grid>
+        );
+    }
+}
 class SearchBody extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            searchData: ''
+            searchData: '',
+            loader : false
         }
     }
 
-    searchResults(params) {
-        this.setState({searchData: params});
+    searchResults(params, state) {
+        state ? this.setState({searchData: params, loader: false}) : this.setState({loader: true});
+        
     }
 
     render() {
@@ -115,7 +133,9 @@ class SearchBody extends React.Component {
                     callback={this
                     .searchResults
                     .bind(this)}/>
-                <Cards data={this.state.searchData}/>
+                    <div>
+                    {this.state.loader ?  <Loader /> : <Cards data={this.state.searchData}/>}
+                    </div>
             </Grid>
         );
     }
@@ -134,7 +154,11 @@ class Body extends React.Component {
 }
 
 SearchBody.protoTypes = {
-    callback: PropTypes.func
+    callback: PropTypes.func,
+}
+
+Cards.PropTypes = {
+    saveVideo: PropTypes.func,
 }
 
 export default Body;

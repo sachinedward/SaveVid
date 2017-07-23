@@ -3,41 +3,43 @@ const YouTube = require('youtube-node')
 const cors = require('cors')
 const app = express()
 const youTube = new YouTube();
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+var session = require('express-session');
+var bodyParser = require('body-parser')
 
 app.use(cors())
-
+app.use( bodyParser.json() ); 
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 
 var url = 'mongodb://localhost:27017/myproject';
+var collection, linkdDb ;
 MongoClient.connect(url, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to server");
   db.collection('dataBase', {strict:true}, function(err, collection) {});
-
+  collection = db.collection('dataBase');
 });
 
 
 //Login
 app.post('/login', function(req, res){
-var email = req.query.email;
-var password = req.query.password;
-var cursor;
+var email = req.body.email;
+var password = req.body.password;
 // Use connect method to connect to the Server 
 MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  var collection = db.collection('dataBase');
-//   cursor = db.collection('dataBase').findOne({ "email":email});
-var user_credentials = {'email':email ,'password' : password};
-   collection.find(user_credentials, function(err, result) {
-       console.log(result);
-     res.send(result);
-     
- });
-  db.close();
+    var collection = db.collection('dataBase');
+    var data  = {'email':email,'password':password};
+      console.log(data);
+    collection.find(data).toArray (function(err, result){
+         if (!err) {
+              db.close();
+              result.length>0 ? res.send(email) :  res.send(false);
+         }
+         });
 });
-
-
 });
 
 //Register
@@ -48,12 +50,14 @@ var password = req.query.password;
 MongoClient.connect(url, function(err, db) {
   assert.equal(null, err);
 var collection = db.collection('dataBase');
-  var user_credentials = [{'email':email},{'password' : password}];
- collection.insert(user_credentials, {w:1}, function(err, result) {
+  var user_credentials = {'email':email,'password' : password};
+ collection.insert(user_credentials, function(err, result) {
      res.send(result);
  });
 });
 })
+
+
 
 //Search Api
 app.get('/search', function (req, res) {
@@ -69,7 +73,6 @@ app.get('/search', function (req, res) {
             var video_ids = Data.map(function(each){
                 return each.id.videoId;          
             });
-            console.log(result)
             res.send(video_ids);
         }
     });
