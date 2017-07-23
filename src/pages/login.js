@@ -38,7 +38,7 @@ class Login extends React.Component{
   submitData(event){
     var pwd = document.getElementById("password").value;
     var email = document.getElementById("email").value;
-    axios.post("http://localhost:3001/register",{
+    axios.post("http://localhost:3001/login",{
       email: email,
       password: pwd
     }).then(function( res){

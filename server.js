@@ -10,27 +10,50 @@ app.use(cors())
 
 
 var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server 
 MongoClient.connect(url, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to server");
- 
-  db.close();
+  db.collection('dataBase', {strict:true}, function(err, collection) {});
+
 });
+
 
 //Login
 app.post('/login', function(req, res){
 var email = req.query.email;
 var password = req.query.password;
-res.send(email, password);
+var cursor;
+// Use connect method to connect to the Server 
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  var collection = db.collection('dataBase');
+//   cursor = db.collection('dataBase').findOne({ "email":email});
+var user_credentials = {'email':email ,'password' : password};
+   collection.find(user_credentials, function(err, result) {
+       console.log(result);
+     res.send(result);
+     
+ });
+  db.close();
+});
+
+
 });
 
 //Register
 app.post('/register', function(req, res){
 var email = req.query.email;
 var password = req.query.password;
-res.send(email, password);
+// Use connect method to connect to the Server 
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+var collection = db.collection('dataBase');
+  var user_credentials = [{'email':email},{'password' : password}];
+ collection.insert(user_credentials, {w:1}, function(err, result) {
+     res.send(result);
+ });
 });
+})
 
 //Search Api
 app.get('/search', function (req, res) {
