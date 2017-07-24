@@ -61,7 +61,15 @@ class Cards extends React.Component {
     }
 
     saveVideo (params) {
-       alert(params);
+axios.post("http://localhost:3001/saveVid",{
+      url: params.url,
+      image: params.image,
+    }).then(function(res){
+      if(res.data !== false)
+      {  alert("Saved");
+       } 
+       else {alert("Oops");}
+    });
     }
 
 
@@ -78,7 +86,7 @@ class Cards extends React.Component {
                     <CardContent>
                         <CardMedia>
                             <img
-                                src={Thumbnail}
+                                src={data[item].image}
                                 alt="Contemplative Reptile"
                                 style={{
                                 width: '100%'
@@ -86,7 +94,7 @@ class Cards extends React.Component {
                         </CardMedia>
                     </CardContent>
                     <CardActions>
-                        <IconButton aria-label="Save Video" onClick={() => _this.saveVideo(data[item])}  key={item}>
+                        <IconButton aria-label="Save Video" onClick={() => _this.saveVideo({url: data[item].url,image : data[item].image})}  key={item}>
                             <Icon>save</Icon>
                         </IconButton>
                         <IconButton aria-label="Play Video">
