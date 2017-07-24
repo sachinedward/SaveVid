@@ -32,7 +32,9 @@ class Login extends React.Component{
       password: pwd
     }).then(function(res){
       if(res.data !== false)
-      {  document.cookie = "email="+res.data;
+      {  //document.cookie = "email="+res.data;
+          localStorage.setItem('isLoggedIn', true);
+            window.location = "/dashboard";
        } 
        else {alert("Invalid Login Attempt");}
     });

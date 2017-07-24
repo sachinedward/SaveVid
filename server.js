@@ -47,7 +47,7 @@ app.post('/login', function (req, res) {
         };
     userData.findOne(user_credentials, 'email', function(err, result){
         if(err) return handleError(err);
-        result != undefined ? res.redirect(302, 'https:google.com') : res.send(false);              
+        result != undefined ? res.send(true) : res.send(false);              
     });
 
 })

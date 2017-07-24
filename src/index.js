@@ -10,6 +10,16 @@ import Login from './pages/login';
 import Navbar from './navbar';
 import Dashboard from './pages/dashboard';
 
+function validateSignup(){
+  var loc = window.location.href;
+  if(loc.indexOf("/login")== -1){
+ if(!localStorage.getItem('isLoggedIn')){
+  window.location = "/login";
+ }}
+}
+
+validateSignup();
+
 class App extends React.Component {
 render() {
     return(
