@@ -1,14 +1,40 @@
 import React from 'react';
 import Card, {CardActions, CardContent, CardMedia} from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
-import Thumbnail from '../images/thumbnail.jpg';
+
 import Grid from 'material-ui/Grid';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
-import Navbar from '../navbar';
+import Navbar from './navbar';
 import axios from "axios";
+import Dialog from 'material-ui/Dialog';
+import Slide from 'material-ui/transitions/Slide';
 
-const Data = {} 
+var Data = {} 
+
+
+class Player extends React.Component {
+  state = {
+    open: false,
+    url: ''
+  };
+
+  handleRequestClose = () => {
+    this.setState({ open: false });
+  };
+
+  render() {
+    return (
+      <div>
+             <IconButton aria-label="Play Video" onClick={() => this.setState({ open: true, url:"https://www.youtube.com/embed/"+this.props.url })}>
+                            <Icon>play_circle_filled</Icon>
+                        </IconButton>
+        <Dialog open={this.state.open} transition={Slide} onRequestClose={this.handleRequestClose} classname="Popover">
+              <iframe width="800" height="800" src={this.state.url}></iframe>
+        </Dialog>
+      </div>
+    );
+  }
+}
 
 
 class CardList extends React.Component {
@@ -41,10 +67,6 @@ axios.post("http://localhost:3001/deleteVid",{
              <Grid item xs={3} sm={2} key={index}>
                 <Card >
                     <CardContent>
-
-                        <Typography type="headline" component="h2">
-                            {Data[key].id}
-                        </Typography>
                         <CardMedia>
                             <img
                                 src={Data[key].image}
@@ -58,6 +80,7 @@ axios.post("http://localhost:3001/deleteVid",{
                         <IconButton aria-label="Delete Video" onClick={() => this.deleteVideo(Data[key]._id)}>
                             <Icon>delete</Icon>
                         </IconButton>
+                        <Player url={Data[key].url}/>   
                     </CardActions>
                 </Card>
             </Grid> );

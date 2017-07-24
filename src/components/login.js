@@ -34,7 +34,7 @@ class Login extends React.Component{
       if(res.data !== false)
       {  //document.cookie = "email="+res.data;
           localStorage.setItem('isLoggedIn', true);
-            window.location = "/dashboard";
+            window.location = "/search";
        } 
        else {alert("Invalid Login Attempt");}
     });

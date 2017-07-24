@@ -2,15 +2,16 @@ import React from "react";
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
-import Navbar from '../navbar';
+import Navbar from './navbar';
 import Button from 'material-ui/Button';
 import axios from "axios";
 import Card, {CardActions, CardContent, CardMedia} from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
-import Thumbnail from '../images/thumbnail.jpg';
+
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import { CircularProgress } from 'material-ui/Progress';
+import Dialog from 'material-ui/Dialog';
+import Slide from 'material-ui/transitions/Slide';
 
 class SearchBar extends React.Component {
 
@@ -97,9 +98,7 @@ axios.post("http://localhost:3001/saveVid",{
                         <IconButton aria-label="Save Video" onClick={() => _this.saveVideo({url: data[item].url,image : data[item].image})}  key={item}>
                             <Icon>save</Icon>
                         </IconButton>
-                        <IconButton aria-label="Play Video">
-                            <Icon>play_circle_filled</Icon>
-                        </IconButton>
+                        <Player url={data[item].url}/>                        
                     </CardActions>
                 </Card>
             </Grid>   )  
@@ -119,13 +118,39 @@ class Loader extends React.Component {
         );
     }
 }
+
+ class Player extends React.Component {
+  state = {
+    open: false,
+    url: ''
+  };
+
+  handleRequestClose = () => {
+    this.setState({ open: false });
+  };
+
+  render() {
+    return (
+      <div>
+             <IconButton aria-label="Play Video" onClick={() => this.setState({ open: true, url:"https://www.youtube.com/embed/"+this.props.url })}>
+                            <Icon>play_circle_filled</Icon>
+                        </IconButton>
+        <Dialog open={this.state.open} transition={Slide} onRequestClose={this.handleRequestClose} classname="Popover">
+              <iframe width="800" height="800" src={this.state.url}></iframe>
+        </Dialog>
+      </div>
+    );
+  }
+}
+
 class SearchBody extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             searchData: '',
-            loader : false
+            loader : false,
+            showPopover: false
         }
     }
 

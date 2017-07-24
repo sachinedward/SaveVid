@@ -38,13 +38,16 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
+app.get('/', function(){
+    console.log('hit');
+})
 //  ************ Login User **************
 app.post('/login', function (req, res) {
     var user_credentials = {
             'email': req.body.email,
             'password': req.body.password
         };
+        console.log(user_credentials);
     userData.findOne(user_credentials, 'email', function(err, result){
         if(err) return handleError(err);
         result != undefined ? res.send(true) : res.send(false);              
@@ -74,7 +77,9 @@ app.post('/saveVid', function (req, res) {
     };
     console.log(video_data);
     var data = new videoData(video_data);
-    data.save();
+    data.save(function(err, result){
+        !err ? res.send(true) : res.send(false)
+    });
 
 })
 

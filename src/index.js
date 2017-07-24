@@ -1,26 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import { MuiThemeProvider } from 'material-ui/styles';
 import 'typeface-roboto';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route } from 'react-router-dom'
 
-import Search from './pages/search';
-import Login from './pages/login';
-import Navbar from './navbar';
-import Dashboard from './pages/dashboard';
+import Search from './components/search';
+import Login from './components/login';
+import Dashboard from './components/dashboard';
 
-function validateSignup(){
-  var loc = window.location.href;
-  if(loc.indexOf("/login")== -1){
+
+class App extends React.Component {
+  componentWillMount(){
+      var loc = window.location.href;
+  if(loc.indexOf("login")=== -1){
  if(!localStorage.getItem('isLoggedIn')){
   window.location = "/login";
  }}
-}
-
-validateSignup();
-
-class App extends React.Component {
+  }
 render() {
     return(
        <MuiThemeProvider>
@@ -29,7 +25,6 @@ render() {
                 <Route path="/search" component={Search} />
                 <Route path="/dashboard" component={Dashboard} />
                 <Route path="/login" component={Login} />
-                {/*<Route path={"register"} component = {Register} />*/}
            </div>
          </BrowserRouter>
       </MuiThemeProvider>    
