@@ -31,9 +31,12 @@ class Login extends React.Component{
       email: email,
       password: pwd
     }).then(function(res){
-      res.data !== false ?  document.cookie = "email="+res.data : alert("Invalid Login Attempt");
+      if(res.data !== false)
+      {  document.cookie = "email="+res.data;
+       } 
+       else {alert("Invalid Login Attempt");}
     });
-    event.preventDefault();
+    event.preventDefault();        
   }
 
 render() {

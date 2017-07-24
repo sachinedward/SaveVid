@@ -1,83 +1,134 @@
+//Server Related Imports
 const express = require('express')
 const YouTube = require('youtube-node')
 const cors = require('cors')
 const app = express()
 const youTube = new YouTube();
-var MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
+var Schema= mongoose.Schema;
 var assert = require('assert');
 var session = require('express-session');
 var bodyParser = require('body-parser')
-
-app.use(cors())
-app.use( bodyParser.json() ); 
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
-
 var url = 'mongodb://localhost:27017/myproject';
-var collection, linkdDb ;
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-  db.collection('dataBase', {strict:true}, function(err, collection) {});
-  collection = db.collection('dataBase');
-});
 
 
-//Login
-app.post('/login', function(req, res){
-var email = req.body.email;
-var password = req.body.password;
-// Use connect method to connect to the Server 
-MongoClient.connect(url, function(err, db) {
-    var collection = db.collection('dataBase');
-    var data  = {'email':email,'password':password};
-      console.log(data);
-    collection.find(data).toArray (function(err, result){
-         if (!err) {
-              db.close();
-              result.length>0 ? res.send(email) :  res.send(false);
-         }
-         });
+
+//  ************ DatBase **************
+mongoose.connect(url);
+
+var videoSchema = new Schema({
+    url: String,
+    image: String
 });
+var userDataSchema = new Schema({
+    email : String,
+    password: String,
 });
 
-//Register
-app.post('/register', function(req, res){
-var email = req.query.email;
-var password = req.query.password;
-// Use connect method to connect to the Server 
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-var collection = db.collection('dataBase');
-  var user_credentials = {'email':email,'password' : password};
- collection.insert(user_credentials, function(err, result) {
-     res.send(result);
- });
-});
+var userData = mongoose.model('userData',userDataSchema);
+var videoData = mongoose.model('videoData',videoSchema);
+
+
+// Handling Cross origin Req
+app.use(cors())
+
+// To get data from post req
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+
+//  ************ Login User **************
+app.post('/login', function (req, res) {
+    var user_credentials = {
+            'email': req.body.email,
+            'password': req.body.password
+        };
+    userData.findOne(user_credentials, 'email', function(err, result){
+        if(err) return handleError(err);
+        result != undefined ? res.redirect(302, 'https:google.com') : res.send(false);              
+    });
+
 })
 
 
+//  ************ Register User **************
+app.post('/register', function (req, res) {
+    var user_credentials = {
+            'email': req.body.email,
+            'password': req.body.password
+        };
+        console.log(user_credentials);
+    var data = new userData(user_credentials);
+    data.save();
 
-//Search Api
+})
+
+
+// ************** Save Data *************
+app.post('/saveVid', function (req, res) {
+    var video_data = {
+            'url': req.body.url,
+            'image': req.body.image
+    };
+    console.log(video_data);
+    var data = new videoData(video_data);
+    data.save();
+
+})
+
+// ************** Get Data *************
+app.get('/getVid', function (req, res) {
+  videoData.find(function(err, results){
+      res.send(results);
+  });
+
+})
+
+// ************** Delete Data *************
+app.post('/deleteVid', function (req, res) {
+    var id = req.body.id;
+  videoData.remove({_id: id},function(err){
+        !err ? res.send(true) : res.send(false)
+  });
+
+})
+
+//  ************ Search Youtube **************
 app.get('/search', function (req, res) {
     var name = req.query.name;
     youTube.setKey('AIzaSyCG4t4VYwaaqFGwsWyPC-3KatMJH1d57P0');
-    // res.header 'Access-Control-Allow-Origin' , '*'
     youTube.search(name, 30, function (error, result) {
         if (error) {
             res.send(error);
         } else {
             var Data = result.items;
-            var array = [];
-            var video_ids = Data.map(function(each){
-                return each.id.videoId;          
+            var video_data = Data.map(function (each) {
+                if(each.id.kind.indexOf('video') > -1){
+                var data = {
+                    url: each.id.videoId,
+                    image : each.snippet.thumbnails.medium.url
+                }
+                return (data);
+                }
             });
-            res.send(video_ids);
+            var filterData = video_data.filter(function(each){
+                if(each != undefined) {
+                    var data = {
+                    url: each.url,
+                    image : each.image
+                }
+                    return (data);
+                }
+            });
+            res.send(filterData);
         }
     });
 });
 
+
+// Server Port
 app.listen(3001, function () {
     console.log('Example app listening on port 3001!')
 })

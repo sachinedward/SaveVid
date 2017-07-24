@@ -14,8 +14,8 @@ class Navbar extends React.Component {
           <Typography type="title" color="inherit">
             Title
           </Typography>
-            <Button><Link to='/dashboard'>Dashboard</Link></Button>
-            <Button><Link to='/search'>Search</Link></Button>
+            <Link to='/dashboard'><Button>Dashboard</Button></Link>
+            <Link to='/search'><Button>Search</Button></Link>
         </Toolbar>
       </AppBar>
     </div>
