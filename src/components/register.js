@@ -22,21 +22,21 @@ const other__button = {
     width: '50%'
   };
 
-class Login extends React.Component{
+class Register extends React.Component{
 
   submitData(event){
     var pwd = document.getElementById("password").value;
     var email = document.getElementById("email").value;
-    axios.post("http://localhost:3001/login",{
+    axios.post("http://localhost:3001/register",{
       email: email,
       password: pwd
     }).then(function(res){
+        console.log(res);
       if(res.data !== false)
       {  //document.cookie = "email="+res.data;
-          localStorage.setItem('isLoggedIn', true);
-            window.location = "/search";
+            window.location = "/login";
        } 
-       else {alert("Invalid Login Attempt");}
+       else {alert("Please try again later");}
     });
     event.preventDefault();        
   }
@@ -49,7 +49,7 @@ render() {
 
         <CardContent>
           <Typography type="headline" component="h2">
-            Login
+            Register
           </Typography>
 
           <form onSubmit={this.submitData.bind(this)}> 
@@ -73,8 +73,8 @@ render() {
         </CardContent>
 
         <CardActions>
-          <Button style={other__button} onClick={() => window.location="/register"}>
-            <Typography type="caption" gutterBottom align="center" >
+          <Button style={other__button}>
+            <Typography type="caption" gutterBottom align="center" onClick={() => window.location="hello.com"}>
               New User? Signup
             </Typography>
           </Button>
@@ -95,4 +95,4 @@ render() {
 //   classes: PropTypes.object.isRequired
 // };
 
-export default Login;
+export default Register;

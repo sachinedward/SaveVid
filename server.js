@@ -64,7 +64,10 @@ app.post('/register', function (req, res) {
         };
         console.log(user_credentials);
     var data = new userData(user_credentials);
-    data.save();
+    data.save(function(err, result){
+        if(err) return handleError(err);
+        result != undefined ? res.send(true) : res.send(false);              
+    });
 
 })
 
