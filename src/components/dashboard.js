@@ -25,7 +25,7 @@ class Player extends React.Component {
   render() {
     return (
       <div>
-             <IconButton aria-label="Play Video" onClick={() => this.setState({ open: true, url:"https://www.youtube.com/embed/"+this.props.url })}>
+             <IconButton aria-label="Play Video" onClick={() => this.setState({ open: true, url:this.props.url })}>
                             <Icon>play_circle_filled</Icon>
                         </IconButton>
         <Dialog open={this.state.open} transition={Slide} onRequestClose={this.handleRequestClose} classname="Popover">
@@ -70,7 +70,7 @@ axios.post("http://localhost:3001/deleteVid",{
                         <CardMedia>
                             <img
                                 src={Data[key].image}
-                                alt="Contemplative Reptile"
+                                alt="Thumbnail"
                                 style={{
                                 width: '100%'
                             }}/>
