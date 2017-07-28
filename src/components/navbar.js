@@ -24,7 +24,7 @@ class Navbar extends React.Component {
           </Typography>
             <Link to='/dashboard'><Button>Dashboard</Button></Link>
             <Link to='/search'><Button>Search</Button></Link>
-            <Link to='/reduxer'><Button>Watch List</Button></Link>
+            <Link to='/redux'><Button>Watch List</Button></Link>
         </Toolbar>
         </Grid>
         <Grid item xs={6} sm={1}>
