@@ -24,9 +24,12 @@ var userDataSchema = new Schema({
     email : String,
     password: String,
 });
-
+var watchListSchema = new Schema ({
+    text: String
+})
 var userData = mongoose.model('userData',userDataSchema);
 var videoData = mongoose.model('videoData',videoSchema);
+var watchListData = mongoose.model('watchList',watchListSchema);
 
 
 // Handling Cross origin Req
@@ -135,6 +138,14 @@ app.get('/search', function (req, res) {
     });
 });
 
+// ************** Save WatchList *************
+app.post('/saveList', function (req, res) {
+    var data = new watchListData(req.body.text);
+    data.save(function(err, result){
+        !err ? res.send(true) : res.send(false)
+    });
+
+})
 
 // Server Port
 app.listen(3001, function () {

@@ -6,13 +6,19 @@ import Button from 'material-ui/Button';
 
 class SearchBar extends React.Component {
 
+enterpressed(event) {
+      var key = event.keyCode || event.which;
+      if(key=='13'){
+    
+      }
+}
     searchYoutube(event) {
         var searched = document
             .getElementById("search")
             .value;
         let _this = this;
-        this.props.callback("loading",false);
         if (searched.length > 0) {
+        this.props.callback("loading",false);            
             axios
                 .get("http://localhost:3001/search?name=" + searched)
                 .then(function (response) {
@@ -22,13 +28,16 @@ class SearchBar extends React.Component {
                 });
 
         }
+        else {
+            alert("Type Something");
+        }
     }
 
     render() {
         return (
             <div className="searchContainer">
-                <TextField id="search" label="Search" margin="normal" fullWidth/>
-                <Button
+                <TextField id="search" label="Search" margin="normal" onKeyUp={this.enterpressed} fullWidth/>
+                <Button 
                     className="login__button"
                     raised
                     onClick={this

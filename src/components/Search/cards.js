@@ -59,12 +59,12 @@ dragStart(event){
                             }}/>
                         </CardMedia>
                     </CardContent>
-                    {/*<CardActions>
+                    <CardActions>
                         <IconButton aria-label="Save Video" onClick={() => _this.saveVideo({url: data[item].url,image : data[item].image})}  key={item}>
                             <Icon>save</Icon>
                         </IconButton>
                         <Player url={data[item].url}/>                        
-                    </CardActions>*/}
+                    </CardActions>
                 </Card>
             </Grid>   )  
         })

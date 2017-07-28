@@ -8,7 +8,7 @@ import Search from './components/Search/SearchComponent';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
-
+import Reduxer from './reduxer';
 
 class App extends React.Component {
   componentWillMount(){
@@ -29,6 +29,7 @@ render() {
                 <Route path="/dashboard" component={Dashboard} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
+                <Route path="/redux" component={Reduxer} />
            </div>
          </BrowserRouter>
       </MuiThemeProvider>    
