@@ -17,17 +17,6 @@ const card = {
     position: 'absolute'
   };
 
-const login__button = {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #53d7ff 90%)',
-    borderRadius: 3,
-    border: 0,
-    margin: '16px 0px',
-    width: '100%',
-    color: 'white',
-    height: 30,
-    padding: '0 30px',
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)'
-};
 
 const other__button = {
     width: '50%'
@@ -38,19 +27,25 @@ class Login extends React.Component{
   submitData(event){
     var pwd = document.getElementById("password").value;
     var email = document.getElementById("email").value;
-    axios.post("http://localhost:3001/register",{
+    axios.post("http://localhost:3001/login",{
       email: email,
       password: pwd
-    }).then(function( res){
-      console(res);
+    }).then(function(res){
+      if(res.data !== false)
+      {  //document.cookie = "email="+res.data;
+          localStorage.setItem('isLoggedIn', true);
+            window.location = "/search";
+       } 
+       else {alert("Invalid Login Attempt");}
     });
-    event.preventDefault();
+    event.preventDefault();        
   }
+
 render() {
   return (
     <div>
 
-      <Card className={card}>
+      <Card style={card}>
 
         <CardContent>
           <Typography type="headline" component="h2">
@@ -71,15 +66,15 @@ render() {
               margin="normal"
               type="password"/>
               
-            <Button type="submit" raised style={login__button}>
+            <Button type="submit" raised className="login__button">
               Login
             </Button>
           </form>
         </CardContent>
 
         <CardActions>
-          <Button style={other__button}>
-            <Typography type="caption" gutterBottom align="center">
+          <Button style={other__button} onClick={() => window.location="/register"}>
+            <Typography type="caption" gutterBottom align="center" >
               New User? Signup
             </Typography>
           </Button>
